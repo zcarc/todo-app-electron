@@ -5,8 +5,8 @@
   "scripts": {
     "start": "electron ."
   },
-  "dependencies": {},
   "devDependencies": {
-    "electron": "^32.0.1"
+    "electron": "^32.0.1",
+    "prettier": "3.3.3"
   }
 }
