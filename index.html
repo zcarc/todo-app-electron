@@ -19,26 +19,29 @@
                 type="text"
                 placeholder="할 일을 입력하세요."
             />
-            <button @click="addTodo">추가</button>
+            <button @click="add">추가</button>
             <ul>
                 <template x-for="todo in todos">
                     <li>
                         <template x-if="editingId !== todo.id">
                             <div>
                                 <span
-                                    x-text="`${todo.year}년 ${todo.month.toString().padStart(2, 0)}월 ${todo.date.toString().padStart(2, 0)}일 ${todo.hour.toString().padStart(2, 0)}시 ${todo.minutes.toString().padStart(2, 0)}분 - ${todo.task}`"
+                                    x-text="`${todo.task} - ${todo.year}년 ${todo.month.toString().padStart(2, 0)}월 ${todo.date.toString().padStart(2, 0)}일 ${todo.hour.toString().padStart(2, 0)}시 ${todo.minutes.toString().padStart(2, 0)}분`"
                                     x-bind:style="todo.completed && {textDecoration: 'line-through'}"
                                     @click="toggleTodoCompleted(todo.id)"
                                 ></span>
-                                <button @click="editTodo(todo.id, todo.task)">
+                                <button @click="edit(todo.id, todo.task)">
                                     수정
+                                </button>
+                                <button @click="remove(todo.id)">
+                                    삭제
                                 </button>
                             </div>
                         </template>
                         <template x-if="editingId === todo.id">
                             <div>
                                 <input x-model="editingInput" type="text" />
-                                <button @click="saveTodo(todo.id, todo.task)">
+                                <button @click="save">
                                     완료
                                 </button>
                             </div>

@@ -4,14 +4,15 @@ function todoAppData() {
     return {
         todoInput: '',
         todos: [],
-        editingId: 0,
 
+        editingId: 0,
         editingInput: '',
 
-        editTodo(id, task) {
+        edit(id, task) {
             this.editingId = id
             this.editingInput = task
         },
+
         async init() {
             this.todos = await ipcRenderer.invoke('get-todos')
         },
@@ -23,10 +24,15 @@ function todoAppData() {
                 }
                 return todo
             })
-            this.saveTodos()
+            this.saveJSON()
         },
 
-        addTodo() {
+        remove(id) {
+            this.todos = this.todos.filter(todo => todo.id !== id)
+            this.saveJSON()
+        },
+
+        add() {
             const task = this.todoInput.trim()
             if (task) {
                 const date = new Date()
@@ -40,14 +46,28 @@ function todoAppData() {
                     task,
                     completed: false,
                 })
-                this.saveTodos()
                 this.todoInput = ''
+                this.saveJSON()
+            } else {
+                alert("추가할 일이 없습니다.")
             }
         },
 
-        saveTodos() {
-            const list = this.todos.map((e) => Object.assign({}, e))
-            ipcRenderer.invoke('save-todos', list)
+        save() {
+            this.todos = this.todos.map(todo => {
+                if(todo.id === this.editingId) {
+                    todo.task = this.editingInput
+                }
+                return todo;
+            })
+            this.editingId = 0
+            this.editingInput = ''
+            this.saveJSON()
+        },
+
+        saveJSON() {
+            const list = this.todos.map((todo) => Object.assign({}, todo))
+            ipcRenderer.invoke('save-todos', list).then()
         },
     }
 }
