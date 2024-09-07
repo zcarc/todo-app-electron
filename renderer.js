@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron')
+const dayjs = require('dayjs')
 
 function todoAppData() {
     return {
@@ -8,28 +9,13 @@ function todoAppData() {
         editingId: 0,
         editingInput: '',
 
-        edit(id, task) {
-            this.editingId = id
-            this.editingInput = task
-        },
+        currentDate: dayjs().format('YYYY-MM-DD'),
 
         async init() {
-            this.todos = await ipcRenderer.invoke('get-todos')
-        },
-
-        toggleTodoCompleted(todoId) {
-            this.todos = this.todos.map((todo) => {
-                if (todo.id === todoId) {
-                    todo.completed = !todo.completed
-                }
-                return todo
+            flatpickr('#calendar', {
+                defaultDate: this.currentDate,
             })
-            this.saveJSON()
-        },
-
-        remove(id) {
-            this.todos = this.todos.filter(todo => todo.id !== id)
-            this.saveJSON()
+            this.todos = await ipcRenderer.invoke('get-todos', this.currentDate)
         },
 
         add() {
@@ -37,7 +23,7 @@ function todoAppData() {
             if (task) {
                 const date = new Date()
                 this.todos.push({
-                    id: this.todos.length + 1,
+                    id: crypto.randomUUID(),
                     year: date.getFullYear(),
                     month: date.getMonth() + 1,
                     date: date.getDate(),
@@ -49,25 +35,50 @@ function todoAppData() {
                 this.todoInput = ''
                 this.saveJSON()
             } else {
-                alert("추가할 일이 없습니다.")
+                alert('추가할 일이 입력되지 않았습니다.')
             }
         },
 
+        edit(id, task) {
+            this.editingId = id
+            this.editingInput = task
+        },
+
         save() {
-            this.todos = this.todos.map(todo => {
-                if(todo.id === this.editingId) {
-                    todo.task = this.editingInput
-                }
-                return todo;
-            })
-            this.editingId = 0
-            this.editingInput = ''
-            this.saveJSON()
+            const editTask = this.editingInput.trim()
+            if (editTask) {
+                this.todos = this.todos.map((todo) => {
+                    if (todo.id === this.editingId) {
+                        todo.task = editTask
+                    }
+                    return todo
+                })
+                this.editingId = 0
+                this.editingInput = ''
+                this.saveJSON()
+            } else {
+                alert('수정할 일이 입력되지 않았습니다.')
+            }
         },
 
         saveJSON() {
             const list = this.todos.map((todo) => Object.assign({}, todo))
-            ipcRenderer.invoke('save-todos', list).then()
+            ipcRenderer.invoke('save-todos', this.currentDate, list).then()
+        },
+
+        remove(id) {
+            this.todos = this.todos.filter((todo) => todo.id !== id)
+            this.saveJSON()
+        },
+
+        toggleTodoCompleted(todoId) {
+            this.todos = this.todos.map((todo) => {
+                if (todo.id === todoId) {
+                    todo.completed = !todo.completed
+                }
+                return todo
+            })
+            this.saveJSON()
         },
     }
 }

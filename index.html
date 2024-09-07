@@ -4,51 +4,72 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Todo Manager</title>
-        <link rel="stylesheet" href="style.css" />
-        <script
-            defer
-            src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
-        ></script>
-        <script src="renderer.js"></script>
+
+        <link rel="stylesheet" href="./style.css" />
+        <link rel="stylesheet" href="./flatpickr.min.css" />
+
+        <script src="./flatpickr.js"></script>
+        <script defer src="./alpinejs@3.14.1.min.js"></script>
+        <script src="./renderer.js"></script>
     </head>
     <body>
-        <h1>Todo Manager</h1>
-        <div x-data="todoAppData">
-            <input
-                x-model="todoInput"
-                type="text"
-                placeholder="할 일을 입력하세요."
-            />
-            <button @click="add">추가</button>
-            <ul>
-                <template x-for="todo in todos">
-                    <li>
-                        <template x-if="editingId !== todo.id">
-                            <div>
-                                <span
-                                    x-text="`${todo.task} - ${todo.year}년 ${todo.month.toString().padStart(2, 0)}월 ${todo.date.toString().padStart(2, 0)}일 ${todo.hour.toString().padStart(2, 0)}시 ${todo.minutes.toString().padStart(2, 0)}분`"
-                                    x-bind:style="todo.completed && {textDecoration: 'line-through'}"
-                                    @click="toggleTodoCompleted(todo.id)"
-                                ></span>
-                                <button @click="edit(todo.id, todo.task)">
-                                    수정
-                                </button>
-                                <button @click="remove(todo.id)">
-                                    삭제
-                                </button>
-                            </div>
-                        </template>
-                        <template x-if="editingId === todo.id">
-                            <div>
-                                <input x-model="editingInput" type="text" />
-                                <button @click="save">
-                                    완료
-                                </button>
-                            </div>
-                        </template>
-                    </li>
-                </template>
-            </ul>
+        <div id="todo-app">
+            <h1>Todo Manager</h1>
+            <div x-data="todoAppData">
+                <div>
+                    <input
+                        x-model="todoInput"
+                        id="add-todo"
+                        type="text"
+                        placeholder="할 일을 입력하세요."
+                    />
+                    <button @click="add" class="btn blue">추가</button>
+                </div>
+                <input
+                    id="calendar"
+                    type="input"
+                    @change="currentDate = $event.target.value"
+                />
+                <ul id="todo-list">
+                    <template x-for="todo in todos">
+                        <li>
+                            <template x-if="editingId !== todo.id">
+                                <div>
+                                    <span
+                                        x-text="`${todo.task} - ${todo.year}년 ${todo.month.toString().padStart(2, 0)}월 ${todo.date.toString().padStart(2, 0)}일 ${todo.hour.toString().padStart(2, 0)}시 ${todo.minutes.toString().padStart(2, 0)}분`"
+                                        x-bind:style="todo.completed && {textDecoration: 'line-through'}"
+                                        @click="toggleTodoCompleted(todo.id)"
+                                    ></span>
+                                    <button
+                                        @click="edit(todo.id, todo.task)"
+                                        class="btn yellow"
+                                    >
+                                        수정
+                                    </button>
+                                    <button
+                                        @click="remove(todo.id)"
+                                        class="btn red"
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
+                            </template>
+                            <template x-if="editingId === todo.id">
+                                <div>
+                                    <input
+                                        x-model="editingInput"
+                                        id="todo-input"
+                                        type="text"
+                                    />
+                                    <button @click="save" class="btn blue">
+                                        완료
+                                    </button>
+                                </div>
+                            </template>
+                        </li>
+                    </template>
+                </ul>
+            </div>
         </div>
     </body>
 </html>
