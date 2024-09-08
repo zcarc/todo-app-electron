@@ -1,4 +1,7 @@
-.input-text, input[type=text] {
+$input-width: 330px;
+$border-basic-ddd: 1px solid #ddd;
+
+%border-shared {
   padding: 5px 12px;
   font-size: 14px;
   line-height: 20px;
@@ -12,22 +15,22 @@
   box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 0 inset;
 }
 
-.input-modify, .input-add, .input-text {
+%border-right-reset {
   border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
   border-left: none !important;
 }
 
-.remove, .save, .edit, .add {
+%border-left-reset {
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
   border-left: none !important;
 }
 
-.load, .remove, .save, .edit, .add, .input-add {
+%set-border-bg {
   color: black;
   background-color: white;
-  border: 1px solid #ddd;
+  border: $border-basic-ddd;
 }
 
 body {
@@ -39,6 +42,10 @@ body {
 
 p {
   all: unset;
+}
+
+input[type=text] {
+  @extend %border-shared;
 }
 
 #todo-app {
@@ -62,18 +69,23 @@ p {
 }
 
 .input-text {
-  width: 330px;
+  width: $input-width;
   display: inline-block;
+  @extend %border-right-reset;
+  @extend %border-shared;
 }
 
 .input-add {
-  width: 330px;
+  width: $input-width;
   padding: 10px;
+  @extend %border-right-reset;
+  @extend %set-border-bg;
 }
 
 .input-modify {
-  width: 330px;
+  width: $input-width;
   padding: 10px;
+  @extend %border-right-reset;
 }
 
 #todo-list {
@@ -117,8 +129,22 @@ p {
   display: flex;
 }
 
+.add {
+  @extend %border-left-reset;
+  @extend %set-border-bg;
+}
+
 .edit {
+  @extend %border-left-reset;
+  @extend %set-border-bg;
   border-radius: 0;
 }
 
-/*# sourceMappingURL=style.css.map */
+.remove, .save {
+  @extend %border-left-reset;
+  @extend %set-border-bg;
+}
+
+.load {
+  @extend %set-border-bg;
+}

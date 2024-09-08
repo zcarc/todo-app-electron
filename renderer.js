@@ -1,6 +1,11 @@
 const { ipcRenderer } = require('electron')
 const dayjs = require('dayjs')
 
+const dateFormat = 'YYYY-MM-DD'
+const dateTimeFormat = 'YYYY-MM-DD HH:mm'
+
+const todayDateStr = dayjs().format('YYYY-MM-DD')
+
 function todoAppData() {
     return {
         todoInput: '',
@@ -9,33 +14,63 @@ function todoAppData() {
         editingId: 0,
         editingInput: '',
 
-        currentDate: dayjs().format('YYYY-MM-DD'),
+        calendarDate: dayjs().format(dateTimeFormat),
 
-        async init() {
+        init() {
             flatpickr('#calendar', {
-                defaultDate: this.currentDate,
+                defaultDate: this.calendarDate,
+                dateFormat: 'Y-m-d',
+                onChange: function (selectedDates, dateStr, instance) {
+                    this.calendarDate = dayjs(dateStr)
+                        .hour(dayjs().hour())
+                        .minute(dayjs().minute())
+                        .format(dateTimeFormat)
+                }.bind(this),
             })
-            this.todos = await ipcRenderer.invoke('get-todos', this.currentDate)
+            this.getJSON(this.calendarDate)
+        },
+
+        getJSON(date) {
+            ipcRenderer.invoke('get-todos', date).then((result) => {
+                this.todos = result
+            })
         },
 
         add() {
             const task = this.todoInput.trim()
             if (task) {
-                const date = new Date()
+                const today = dayjs(this.calendarDate)
+
+                const id = crypto.randomUUID()
+                const year = today.year()
+                const month = today.month() + 1
+                const date = today.date()
+                let hour = today.hour()
+                let minutes = today.minute()
+                if (
+                    todayDateStr !== dayjs(this.calendarDate).format(dateFormat)
+                ) {
+                    hour = 0
+                    minutes = 0
+                }
+
                 this.todos.push({
-                    id: crypto.randomUUID(),
-                    year: date.getFullYear(),
-                    month: date.getMonth() + 1,
-                    date: date.getDate(),
-                    hour: date.getHours(),
-                    minutes: date.getMinutes(),
+                    id,
+                    year,
+                    month,
+                    date,
+                    hour,
+                    minutes,
                     task,
                     completed: false,
                 })
+
                 this.todoInput = ''
                 this.saveJSON()
             } else {
-                alert('추가할 일이 입력되지 않았습니다.')
+                Swal.fire({
+                    text: '추가할 일이 입력되지 않았습니다.',
+                })
             }
         },
 
@@ -63,7 +98,7 @@ function todoAppData() {
 
         saveJSON() {
             const list = this.todos.map((todo) => Object.assign({}, todo))
-            ipcRenderer.invoke('save-todos', this.currentDate, list).then()
+            ipcRenderer.invoke('save-todos', this.calendarDate, list).then()
         },
 
         remove(id) {

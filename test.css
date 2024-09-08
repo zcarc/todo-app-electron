@@ -1,4 +1,11 @@
-.input-text, input[type=text] {
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
+
+input[type=text] {
   padding: 5px 12px;
   font-size: 14px;
   line-height: 20px;
@@ -8,37 +15,15 @@
   background-repeat: no-repeat;
   background-position: right 8px center;
   border: 1px solid #e1e4e8;
+  border-radius: 6px;
   outline: none;
-  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 0 inset;
+  box-shadow: rgba(225, 228, 232, 0.2) 0px 1px 0px 0px inset;
 }
 
-.input-modify, .input-add, .input-text {
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  border-left: none !important;
-}
-
-.remove, .save, .edit, .add {
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  border-left: none !important;
-}
-
-.load, .remove, .save, .edit, .add, .input-add {
-  color: black;
-  background-color: white;
-  border: 1px solid #ddd;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 20px;
-}
-
-p {
-  all: unset;
+input[type=text]:focus {
+  border-color: #0366d6;
+  outline: none;
+  box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
 }
 
 #todo-app {
@@ -49,7 +34,7 @@ p {
 }
 
 #top-box {
-  width: 600px;
+  width: 450px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,18 +47,17 @@ p {
 }
 
 .input-text {
-  width: 330px;
-  display: inline-block;
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border: 1px solid #ddd;
 }
 
 .input-add {
   width: 330px;
   padding: 10px;
-}
-
-.input-modify {
-  width: 330px;
-  padding: 10px;
+  margin-left: 5px;
 }
 
 #todo-list {
@@ -90,11 +74,14 @@ p {
 .btn {
   cursor: pointer;
   outline: 0;
+  color: #fff;
   display: inline-block;
   font-weight: 400;
   text-align: center;
+  border: 1px solid transparent;
   padding: 6px 12px;
   font-size: 16px;
+  border-radius: 0.25rem;
 }
 
 .bg-blue {
@@ -113,12 +100,4 @@ p {
   color: #dc3545;
 }
 
-.flex {
-  display: flex;
-}
-
-.edit {
-  border-radius: 0;
-}
-
-/*# sourceMappingURL=style.css.map */
+/*# sourceMappingURL=test.css.map */
